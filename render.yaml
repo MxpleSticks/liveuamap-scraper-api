@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: liveuamap-scraper-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: RATE_LIMIT_REQUESTS
+        value: 90
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: 60
+      - key: MAX_INCIDENTS_CAP
+        value: 100
+      - key: CACHE_TTL_SECONDS
+        value: 90
+      - key: REQUEST_TIMEOUT_SECONDS
+        value: 30
+      - key: ALLOWED_HOSTS
+        value: iran.liveuamap.com,*.liveuamap.com
