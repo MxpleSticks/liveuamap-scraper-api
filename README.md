@@ -38,6 +38,10 @@ Each incident includes:
 - `location`
 - `coordinates` (`{"lat": ..., "lng": ...}` or `null`)
 
+Current response restriction:
+
+- Most recent `30` incidents per request.
+
 ## Safety Features
 
 - Per-IP rate limiting (default: `90` requests per `60` seconds)
