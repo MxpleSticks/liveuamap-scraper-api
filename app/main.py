@@ -7,6 +7,7 @@ import requests
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.cache import TTLCache
 from app.config import SETTINGS
@@ -33,7 +34,9 @@ rate_limiter = InMemoryRateLimiter(
     window_seconds=SETTINGS.rate_limit_window_seconds,
 )
 response_cache = TTLCache(ttl_seconds=SETTINGS.cache_ttl_seconds, max_entries=256)
-SITE_FILE = Path(__file__).resolve().parent / "static" / "index.html"
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+SITE_FILE = STATIC_DIR / "index.html"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 CONFLICT_URLS = {
     "iran": "https://iran.liveuamap.com/",
