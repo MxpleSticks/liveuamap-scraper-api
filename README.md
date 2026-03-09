@@ -217,14 +217,3 @@ You can still run the direct script mode:
 ```powershell
 python scraper.py https://iran.liveuamap.com/ --max-incidents 20
 ```
-
-## Environment Variables
-
-You can tune behavior in Render:
-
-- `RATE_LIMIT_REQUESTS` (default `90`)
-- `RATE_LIMIT_WINDOW_SECONDS` (default `60`)
-- `MAX_INCIDENTS_CAP` (default `100`)
-- `CACHE_TTL_SECONDS` (default `90`)
-- `REQUEST_TIMEOUT_SECONDS` (default `30`)
-- `ALLOWED_HOSTS` (default `iran.liveuamap.com,*.liveuamap.com`)
