@@ -8,7 +8,7 @@ FastAPI service that scrapes global incident updates from LiveUAMap region and t
 
 Base URL:
 
-- `https://liveuamap-scraper-api.onrender.com`
+- `https://liveuamap-scraper-api-v6jt.onrender.com`
 
 Most-used endpoints:
 
@@ -20,10 +20,10 @@ Most-used endpoints:
 Production examples:
 
 ```powershell
-curl "https://liveuamap-scraper-api.onrender.com/health"
-curl "https://liveuamap-scraper-api.onrender.com/conflicts"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=ukraine&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?url=https://taiwan.liveuamap.com/&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/health"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/conflicts"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=ukraine&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?url=https://taiwan.liveuamap.com/&max_incidents=20"
 ```
 
 ## What It Returns
@@ -59,7 +59,7 @@ Open docs:
 Example call:
 
 ```powershell
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=taiwan&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=taiwan&max_incidents=20"
 ```
 
 ## Pick A Conflict
@@ -156,21 +156,21 @@ Supported preset values:
 Examples:
 
 ```powershell
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=ukraine&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=iran&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=taiwan&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=india&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=syria&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=israelpalestine&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=russia&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=uk&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=nigeria&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=drcongo&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=mexico&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=usa&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=isis&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?conflict=health&max_incidents=20"
-curl "https://liveuamap-scraper-api.onrender.com/scrape?url=https://ukraine.liveuamap.com/&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=ukraine&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=iran&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=taiwan&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=india&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=syria&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=israelpalestine&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=russia&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=uk&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=nigeria&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=drcongo&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=mexico&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=usa&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=isis&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=health&max_incidents=20"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/scrape?url=https://ukraine.liveuamap.com/&max_incidents=20"
 ```
 
 Note:
@@ -182,28 +182,28 @@ Note:
 
 Base URL:
 
-- `https://liveuamap-scraper-api.onrender.com`
+- `https://liveuamap-scraper-api-v6jt.onrender.com`
 
 Direct endpoints:
 
-- `https://liveuamap-scraper-api.onrender.com/health`
-- `https://liveuamap-scraper-api.onrender.com/conflicts`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=iran&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=ukraine&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=taiwan&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=india&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=syria&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=russia&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=nigeria&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=usa&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=isis&max_incidents=20`
-- `https://liveuamap-scraper-api.onrender.com/scrape?conflict=ukraine&max_incidents=20&skip_detail_source=true`
-- `https://liveuamap-scraper-api.onrender.com/scrape?url=https://iran.liveuamap.com/&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/health`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/conflicts`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=iran&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=ukraine&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=taiwan&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=india&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=syria&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=russia&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=nigeria&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=usa&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=isis&max_incidents=20`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?conflict=ukraine&max_incidents=20&skip_detail_source=true`
+- `https://liveuamap-scraper-api-v6jt.onrender.com/scrape?url=https://iran.liveuamap.com/&max_incidents=20`
 
 Get available presets:
 
 ```powershell
-curl "https://liveuamap-scraper-api.onrender.com/conflicts"
+curl "https://liveuamap-scraper-api-v6jt.onrender.com/conflicts"
 ```
 
 ## Keep CLI Script
