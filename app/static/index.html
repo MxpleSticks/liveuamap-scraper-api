@@ -66,28 +66,33 @@
       white-space: nowrap;
     }
 
-    .tabs {
+    .feed-selector {
       display: flex;
       gap: 8px;
       align-items: center;
-      overflow: auto;
     }
 
-    .tab {
-      border: none;
-      background: transparent;
-      color: #3861d8;
+    .active-feed {
+      border: 1px solid var(--line);
+      background: #f8faff;
+      color: #274061;
       font-weight: 600;
-      font-size: 1rem;
-      border-radius: 7px;
-      padding: 7px 11px;
-      cursor: pointer;
+      font-size: 0.88rem;
+      border-radius: 8px;
+      padding: 6px 10px;
       white-space: nowrap;
     }
 
-    .tab.active {
+    .picker-btn {
+      border: 1px solid var(--line);
       background: var(--blue);
       color: #fff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border-radius: 8px;
+      padding: 6px 11px;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     .right-head {
@@ -234,13 +239,13 @@
     }
 
     .empty {
-      margin: 18px 14px;
-      border: 1px dashed var(--line);
-      border-radius: 8px;
-      padding: 16px;
+      margin: 14px;
+      border: none;
+      border-radius: 0;
+      padding: 4px 0;
       font-size: 0.9rem;
       color: var(--muted);
-      background: #fbfdff;
+      background: transparent;
     }
 
     .leaflet-popup-content {
@@ -319,6 +324,96 @@
       padding: 7px 12px;
       cursor: pointer;
       font-weight: 600;
+    }
+
+    .picker-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(10, 18, 28, 0.45);
+      z-index: 2950;
+      padding: 18px;
+    }
+
+    .picker-box {
+      width: min(980px, 100%);
+      max-height: min(82vh, 900px);
+      overflow: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 12px 34px rgba(18, 28, 44, 0.2);
+      padding: 14px;
+    }
+
+    .picker-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .picker-title {
+      margin: 0;
+      font-size: 1.06rem;
+      color: #20324a;
+    }
+
+    .picker-close {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #2a3d50;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.84rem;
+    }
+
+    .picker-group {
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .picker-group:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .picker-group-title {
+      margin: 0 0 8px;
+      font-size: 0.87rem;
+      color: #46617f;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .picker-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .picker-item {
+      border: 1px solid #ced8e7;
+      background: #fff;
+      color: #234061;
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 0.83rem;
+      cursor: pointer;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .picker-item.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
     }
 
     .parody-modal {
@@ -400,7 +495,10 @@
         <img src="https://iran.liveuamap.com/images/logo_luam.svg" alt="Parody logo">
       </div>
       <div id="today" class="today"></div>
-      <nav id="conflict-tabs" class="tabs" aria-label="Conflicts"></nav>
+      <div class="feed-selector">
+        <div id="active-feed" class="active-feed">Ukraine</div>
+        <button id="feed-picker-open" class="picker-btn" type="button">Switch Feed</button>
+      </div>
     </div>
     <div class="right-head">
       <a class="orig-link" href="https://liveuamap.com/" target="_blank" rel="noopener noreferrer">Original site</a>
@@ -436,6 +534,16 @@
       <div class="info-actions">
         <button id="info-close" class="info-close" type="button">Close</button>
       </div>
+    </div>
+  </div>
+
+  <div id="feed-picker-modal" class="picker-modal" role="dialog" aria-modal="true" aria-labelledby="picker-title">
+    <div class="picker-box">
+      <div class="picker-head">
+        <h2 id="picker-title" class="picker-title">Choose Feed</h2>
+        <button id="feed-picker-close" class="picker-close" type="button">Close</button>
+      </div>
+      <div id="picker-groups"></div>
     </div>
   </div>
 
@@ -570,6 +678,33 @@
       usa: "USA",
       isis: "ISIS",
       health: "Health",
+    };
+    const GROUP_ORDER = ["Asia", "Middle East", "Europe", "Africa", "Americas", "Misc", "Other"];
+    const CONFLICT_GROUPS = {
+      Asia: new Set([
+        "taiwan", "japan", "vietnam", "thailand", "bangladesh", "indonesia", "koreas",
+        "hongkong", "china", "myanmar", "india", "kashmir", "philippines", "srilanka",
+        "maldives",
+      ]),
+      "Middle East": new Set([
+        "iran", "syria", "yemen", "israelpalestine", "turkey", "egypt", "iraq", "libya",
+        "centralasia", "kurds", "afghanistan", "qatar", "pakistan", "hezbollah",
+        "lebanon", "tunisia", "algeria", "saudiarabia",
+      ]),
+      Europe: new Set([
+        "ukraine", "russia", "hungary", "ireland", "caucasus", "balkans", "poland",
+        "belarus", "baltics", "spain", "germany", "france", "uk", "moldova", "italy",
+      ]),
+      Africa: new Set([
+        "cameroon", "tanzania", "nigeria", "ethiopia", "somalia", "kenya", "alshabab",
+        "uganda", "sudan", "drcongo", "southafrica", "sahel", "centralafrica", "zimbabwe",
+      ]),
+      Americas: new Set([
+        "colombia", "brazil", "venezuela", "mexico", "caribbean", "guyana", "puertorico",
+        "nicaragua", "latam", "canada", "honduras", "argentina", "bolivia", "chile",
+        "peru", "usa",
+      ]),
+      Misc: new Set(["isis", "health"]),
     };
     const VIEWS = {
       ukraine: { center: [49.0, 31.3], zoom: 5 },
@@ -707,6 +842,20 @@
       });
     }
 
+    function initFeedPickerModal() {
+      const modal = document.getElementById("feed-picker-modal");
+      const open = document.getElementById("feed-picker-open");
+      const close = document.getElementById("feed-picker-close");
+      const show = () => { modal.style.display = "grid"; };
+      const hide = () => { modal.style.display = "none"; };
+
+      open.addEventListener("click", show);
+      close.addEventListener("click", hide);
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) hide();
+      });
+    }
+
     async function fetchConflict(conflict) {
       const endpoint = `${API_BASE}/scrape?conflict=${encodeURIComponent(conflict)}&max_incidents=${REQUEST_MAX_INCIDENTS}`;
       const res = await fetch(endpoint);
@@ -785,18 +934,70 @@
       return conflict.charAt(0).toUpperCase() + conflict.slice(1);
     }
 
-    function renderTabs() {
-      const tabs = document.getElementById("conflict-tabs");
-      tabs.innerHTML = "";
+    function conflictGroup(conflict) {
+      for (const groupName of GROUP_ORDER) {
+        const members = CONFLICT_GROUPS[groupName];
+        if (members && members.has(conflict)) return groupName;
+      }
+      return "Other";
+    }
 
-      state.conflicts.forEach((conflict) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "tab";
-        button.dataset.conflict = conflict;
-        button.textContent = conflictLabel(conflict);
-        button.addEventListener("click", () => { void setActiveTab(conflict); });
-        tabs.appendChild(button);
+    function groupedConflicts(conflicts) {
+      const groups = new Map();
+      GROUP_ORDER.forEach((name) => groups.set(name, []));
+
+      conflicts.forEach((conflict) => {
+        const groupName = conflictGroup(conflict);
+        groups.get(groupName).push(conflict);
+      });
+
+      return GROUP_ORDER.filter((name) => groups.get(name).length > 0).map((name) => ({
+        name,
+        conflicts: groups.get(name),
+      }));
+    }
+
+    function setActiveFeedLabel(conflict) {
+      document.getElementById("active-feed").textContent = conflictLabel(conflict);
+    }
+
+    function syncPickerSelection() {
+      document.querySelectorAll(".picker-item").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.conflict === state.activeConflict);
+      });
+    }
+
+    function renderFeedPickerGroups() {
+      const container = document.getElementById("picker-groups");
+      container.innerHTML = "";
+
+      groupedConflicts(state.conflicts).forEach((group) => {
+        const section = document.createElement("section");
+        section.className = "picker-group";
+
+        const title = document.createElement("h3");
+        title.className = "picker-group-title";
+        title.textContent = group.name;
+        section.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "picker-grid";
+
+        group.conflicts.forEach((conflict) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "picker-item";
+          button.dataset.conflict = conflict;
+          button.textContent = conflictLabel(conflict);
+          button.addEventListener("click", () => {
+            document.getElementById("feed-picker-modal").style.display = "none";
+            void setActiveTab(conflict);
+          });
+          grid.appendChild(button);
+        });
+
+        section.appendChild(grid);
+        container.appendChild(section);
       });
     }
 
@@ -913,7 +1114,7 @@
       }
 
       if (!fetched) {
-        feed.innerHTML = "<div class='empty'>Click a tab to load incidents for that feed.</div>";
+        feed.innerHTML = "<div class='empty'>Use Choose Feed to load incidents for a region.</div>";
         return;
       }
 
@@ -993,9 +1194,8 @@
     async function setActiveTab(conflict) {
       if (!state.conflicts.includes(conflict)) return;
       state.activeConflict = conflict;
-      document.querySelectorAll("#conflict-tabs .tab").forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.conflict === conflict);
-      });
+      setActiveFeedLabel(conflict);
+      syncPickerSelection();
       setLayer(conflict);
       renderFeed();
       fitConflict(conflict);
@@ -1006,6 +1206,7 @@
       setDateHeader();
       initInfoModal();
       initParodyModal();
+      initFeedPickerModal();
 
       try {
         state.conflicts = await fetchAvailableConflicts();
@@ -1018,7 +1219,7 @@
         state.activeConflict = state.conflicts[0] || "ukraine";
       }
 
-      renderTabs();
+      renderFeedPickerGroups();
       initMap();
       if (!state.conflicts.length) {
         updateStatus("No preset conflicts available.");
