@@ -663,6 +663,8 @@
       map: null,
       layers: {},
       markers: {},
+      fetched: {},
+      loading: {},
     };
 
     function escapeHtml(text) {
@@ -747,7 +749,35 @@
         if (!state.markers[conflict]) {
           state.markers[conflict] = [];
         }
+        if (!Object.prototype.hasOwnProperty.call(state.fetched, conflict)) {
+          state.fetched[conflict] = false;
+        }
+        if (!Object.prototype.hasOwnProperty.call(state.loading, conflict)) {
+          state.loading[conflict] = null;
+        }
       });
+    }
+
+    function updateStatus(text) {
+      document.getElementById("updated").textContent = text;
+    }
+
+    function refreshStatus() {
+      const fetchedCount = state.conflicts.filter((name) => state.fetched[name]).length;
+      const loadingCount = state.conflicts.filter((name) => Boolean(state.loading[name])).length;
+
+      if (loadingCount > 0) {
+        updateStatus(`Loading ${loadingCount} feed(s)... ${fetchedCount}/${state.conflicts.length} ready`);
+        return;
+      }
+
+      if (fetchedCount > 0) {
+        const stamp = new Date().toLocaleString();
+        updateStatus(`Updated on ${stamp} - loaded ${fetchedCount}/${state.conflicts.length} conflicts`);
+        return;
+      }
+
+      updateStatus("Updating...");
     }
 
     function conflictLabel(conflict) {
@@ -765,7 +795,7 @@
         button.className = "tab";
         button.dataset.conflict = conflict;
         button.textContent = conflictLabel(conflict);
-        button.addEventListener("click", () => setActiveTab(conflict));
+        button.addEventListener("click", () => { void setActiveTab(conflict); });
         tabs.appendChild(button);
       });
     }
@@ -874,6 +904,18 @@
       const conflict = state.activeConflict;
       const incidents = state.data[conflict] || [];
       const error = state.errors[conflict];
+      const isLoading = Boolean(state.loading[conflict]);
+      const fetched = Boolean(state.fetched[conflict]);
+
+      if (isLoading) {
+        feed.innerHTML = "<div class='empty'>Loading incidents...</div>";
+        return;
+      }
+
+      if (!fetched) {
+        feed.innerHTML = "<div class='empty'>Click a tab to load incidents for that feed.</div>";
+        return;
+      }
 
       if (error) {
         feed.innerHTML = `<div class="empty">${escapeHtml(error)}</div>`;
@@ -906,7 +948,49 @@
       });
     }
 
-    function setActiveTab(conflict) {
+    async function loadConflict(conflict) {
+      if (!state.conflicts.includes(conflict)) return;
+      if (state.fetched[conflict]) return;
+      if (state.loading[conflict]) return state.loading[conflict];
+
+      const started = Date.now();
+      const pending = fetchConflict(conflict)
+        .then((payload) => {
+          state.fetched[conflict] = true;
+          state.errors[conflict] = "";
+          state.data[conflict] = payload.incidents || [];
+        })
+        .catch((error) => {
+          state.fetched[conflict] = false;
+          state.data[conflict] = [];
+          state.errors[conflict] = `${conflict}: ${error?.message || "Failed to fetch incidents"}`;
+        })
+        .finally(() => {
+          state.loading[conflict] = null;
+          buildMarkers(conflict);
+
+          if (state.activeConflict === conflict) {
+            renderFeed();
+            fitConflict(conflict);
+          }
+
+          const took = Date.now() - started;
+          const stamp = new Date().toLocaleString();
+          const fetchedCount = state.conflicts.filter((name) => state.fetched[name]).length;
+          updateStatus(`Updated on ${stamp} (${took}ms for ${conflict}) - loaded ${fetchedCount}/${state.conflicts.length} conflicts`);
+        });
+
+      state.loading[conflict] = pending;
+      refreshStatus();
+
+      if (state.activeConflict === conflict) {
+        renderFeed();
+      }
+
+      return pending;
+    }
+
+    async function setActiveTab(conflict) {
       if (!state.conflicts.includes(conflict)) return;
       state.activeConflict = conflict;
       document.querySelectorAll("#conflict-tabs .tab").forEach((btn) => {
@@ -915,34 +999,7 @@
       setLayer(conflict);
       renderFeed();
       fitConflict(conflict);
-    }
-
-    async function loadAll() {
-      if (!state.conflicts.length) {
-        document.getElementById("updated").textContent = "No preset conflicts available.";
-        document.getElementById("feed").innerHTML = "<div class='empty'>No conflicts configured.</div>";
-        return;
-      }
-
-      const started = Date.now();
-      const results = await Promise.allSettled(state.conflicts.map((name) => fetchConflict(name)));
-
-      results.forEach((res, idx) => {
-        const conflict = state.conflicts[idx];
-        if (res.status === "fulfilled") {
-          state.errors[conflict] = "";
-          state.data[conflict] = res.value.incidents || [];
-        } else {
-          state.data[conflict] = [];
-          state.errors[conflict] = `${conflict}: ${res.reason?.message || "Failed to fetch incidents"}`;
-        }
-        buildMarkers(conflict);
-      });
-
-      setActiveTab(state.activeConflict);
-      const took = Date.now() - started;
-      const stamp = new Date().toLocaleString();
-      document.getElementById("updated").textContent = `Updated on ${stamp} (${took}ms) - showing max available per conflict`;
+      await loadConflict(conflict);
     }
 
     async function initApp() {
@@ -963,7 +1020,13 @@
 
       renderTabs();
       initMap();
-      await loadAll();
+      if (!state.conflicts.length) {
+        updateStatus("No preset conflicts available.");
+        document.getElementById("feed").innerHTML = "<div class='empty'>No conflicts configured.</div>";
+        return;
+      }
+
+      await setActiveTab(state.activeConflict);
     }
 
     initApp();
