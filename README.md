@@ -2,9 +2,19 @@
 
 > Please support the original project at [LiveUAMap](https://liveuamap.com/) and use this viewer responsibly with attribution.
 
+## Important Disclaimer
+
+- This project runs on the **Render free tier**, so it can be slow and may have cold starts.
+- This is **not a database** and **not the official LiveUAMap API**.
+- It is a **remote scraper** that fetches incident data from public LiveUAMap pages on demand.
+- Typical request time is about **2-4 seconds** when requesting **30 incidents** (the current limit), so performance is okay for testing but not instant.
+- This is meant for **hobby/testing use**, not serious professional or mission-critical production use.
+- If you need a faster, easier, and more reliable API, buy the official one:
+  - [LiveUAMap API pricing / signup](https://liveuamap.com/promo/api)
+
 FastAPI service that scrapes global incident updates from LiveUAMap region and topic pages.
 
-## Use This API (Production)
+## Use This API (Hobby / Testing)
 
 Base URL:
 
@@ -17,7 +27,7 @@ Most-used endpoints:
 - `GET /scrape?conflict=<preset>&max_incidents=<n>`
 - `GET /scrape?url=<full_liveuamap_url>&max_incidents=<n>`
 
-Production examples:
+Example calls:
 
 ```powershell
 curl "https://liveuamap-scraper-api-v6jt.onrender.com/health"
